@@ -1,0 +1,35 @@
+name: Test and Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests
+        run: npm test
+        env:
+          # Можно добавить переменные окружения для тестов
+          NODE_ENV: test
+
+      - name: Notify Render
+        run: |
+          curl -X POST https://api.render.com/v1/services/${{ secrets.RENDER_SERVICE_ID }}/deploys \
+            -H 'Authorization: Bearer ${{ secrets.RENDER_API_KEY }}' \
+            -H 'Content-Type: application/json' \
+            -d '{}'
