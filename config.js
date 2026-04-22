@@ -8,11 +8,12 @@ module.exports = {
     secretKey: '1508a005299203f288e54a824f94d267',
     
     // URL API бота
-    apiUrl: 'https://bot-hostname.com/api/v1/botx_trello',
+    apiUrl: process.env.API_URL ||  'https://bot-hostname.com/api/v1/botx_trello',
     
     // Порт для вебхука (можно изменить при необходимости)
-    port: 3000,
+    port: process.env.PORT || 3000,
     
     // Хост для вебхука
-    host: '0.0.0.0'
+    host: '0.0.0.0',
+	openWeatherApiKey: process.env.OPENWEATHER_API_KEY || '7f51631b20322cf5ac3fe7e67dc82cf2'
 };

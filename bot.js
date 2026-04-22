@@ -50,19 +50,35 @@ class WeatherBot {
 
     // Метод для получения погоды (заглушка - в реальности нужно интегрировать с API погоды)
     async fetchWeather(city) {
-        // Здесь должна быть интеграция с API погоды
-        // Пока используем заглушку с примером данных
-        const weatherData = {
-            'Екатеринбург': '🌤 Температура: +18°C, без осадков',
-            'Самара': '⛅ Температура: +20°C, переменная облачность',
-            'Саратов': '☀️ Температура: +22°C, ясно',
-            'Нижний Новгород': '🌦 Температура: +16°C, возможен дождь',
-            'Оренбург': '🌤 Температура: +19°C, малооблачно',
-            'Уральск': '⛅ Температура: +17°C, облачно'
-        };
-        
-        return `Погода в ${city}: ${weatherData[city] || 'данные недоступны'}`;
+    const apiKey = require('./config').openWeatherApiKey;
+    const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&lang=ru&units=metric`;
+
+    try {
+        const axios = require('axios');
+        const response = await axios.get(url);
+
+        const data = response.data;
+        const temp = Math.round(data.main.temp);
+        const feelsLike = Math.round(data.main.feels_like);
+        const description = data.weather[0].description;
+        const humidity = data.main.humidity;
+        const windSpeed = data.wind.speed;
+
+        return (
+            `Погода в ${city}:\n` +
+            `🌡 Температура: ${temp}°C (ощущается как ${feelsLike}°C)\n` +
+            `📝 ${description.charAt(0).toUpperCase() + description.slice(1)}\n` +
+            `💧 Влажность: ${humidity}%\n` +
+            `💨 Ветер: ${windSpeed} м/с`
+        );
+    } catch (error) {
+        if (error.response?.status === 404) {
+            return `❌ Город "${city}" не найден. Проверьте название.`;
+        }
+        console.error('OpenWeather API error:', error.message);
+        return `⚠️ Не удалось получить данные о погоде. Попробуйте позже.`;
     }
+}
 
     // Обработчик команды помощи
     async showHelp() {

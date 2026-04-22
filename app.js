@@ -15,30 +15,41 @@ const app = express();
 app.use(bodyParser.json());
 
 // Эндпоинт для вебхука бота
+// Эндпоинт для вебхука бота
 app.post('/webhook', async (req, res) => {
     try {
-        // Получение данных сообщения
-        const message = req.body;
-        
-        // Проверка наличия текста сообщения
-        if (!message || !message.text) {
-            return res.status(400).json({ error: 'Invalid message format' });
+        const body = req.body;
+        console.log('📥 Получен полный запрос:', body);
+
+        const text = body?.command?.body?.trim();
+
+        if (!text) {
+            console.log('❌ Нет текста в запросе');
+            return res.status(400).json({ error: 'No message text found' });
         }
-        
-        // Обработка сообщения ботом
-        const responseText = await bot.handleMessage(message);
-        
-        // Формирование ответа
-        const response = {
-            text: responseText,
-            // Здесь могут быть дополнительные параметры в зависимости от API eXpress
+
+        const message = {
+            text: text,
+            userId: body.from?.user_huid,
+            username: body.from?.username
         };
-        
-        // Отправка ответа
+
+        console.log('📝 Обрабатываем команду:', text);
+
+        const responseText = await bot.handleMessage(message);
+
+        let response;
+        if (typeof responseText === 'object' && responseText.text) {
+            response = responseText;
+        } else {
+            response = { text: responseText };
+        }
+
+        console.log('📤 Отправляем ответ:', response);
         res.json(response);
-        
+
     } catch (error) {
-        console.error('Error processing message:', error);
+        console.error('❌ Ошибка сервера:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 });
