@@ -55,8 +55,8 @@ app.post('/webhook', async (req, res) => {
 });
 
 // Маршрут для проверки работоспособности
-app.get('/', (req, res) => {
-    res.send('Weather Bot is running!');
+app.get('/test', (req, res) => {
+    res.json({ text: "Тест работает!" });
 });
 
 // Запуск сервера
