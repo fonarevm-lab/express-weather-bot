@@ -5,8 +5,9 @@ class WeatherBot {
     constructor() {
         this.commands = {
             'погода': this.getWeather.bind(this),
-            'help': this.showHelp.bind(this),
-            'команды': this.showCommands.bind(this)
+			'help': this.showHelp.bind(this),
+			'команды': this.showCommands.bind(this),
+			'помощь': this.showHelp.bind(this)
         };
         
         // Города, для которых доступна информация о погоде
@@ -36,18 +37,19 @@ class WeatherBot {
 
     // Обработчик для команды погоды
     async getWeather(message) {
-        const text = message.text;
-        
-        // Поиск города в сообщении
-        for (const city of this.cities) {
-            if (text.includes(city)) {
-                return await this.fetchWeather(city);
-            }
-        }
-        
-        return `Я могу показать погоду в следующих городах: ${this.cities.join(', ')}\nПример: "погода Екатеринбург"`;
-    }
+		console.log('🔍 getWeather: входящий текст:', message.text);
 
+		const text = message.text;
+
+		for (const city of this.cities) {
+			console.log('🔎 Проверяем город:', city);
+			if (text.includes(city)) {
+				return await this.fetchWeather(city);
+			}
+		}
+
+		return `Я могу показать погоду в следующих городах: ${this.cities.join(', ')}\nПример: "погода Екатеринбург"`;
+	}	
     // Метод для получения погоды (заглушка - в реальности нужно интегрировать с API погоды)
     async fetchWeather(city) {
     const apiKey = require('./config').openWeatherApiKey;

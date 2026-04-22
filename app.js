@@ -15,7 +15,6 @@ const app = express();
 app.use(bodyParser.json());
 
 // Эндпоинт для вебхука бота
-// Эндпоинт для вебхука бота
 app.post('/webhook', async (req, res) => {
     try {
         const body = req.body;
@@ -46,6 +45,7 @@ app.post('/webhook', async (req, res) => {
         }
 
         console.log('📤 Отправляем ответ:', response);
+		res.setHeader('Content-Type', 'application/json; charset=utf-8');
         res.json(response);
 
     } catch (error) {
